@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="mb-4 p-3 rounded bg-yellow-100 text-yellow-800"><%= message %></div>
+  <% } %>
+  <h1 class="text-2xl font-semibold mb-4">Dashboard</h1>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <% if (groups && groups.length) { %>
+      <% groups.forEach(g => { %>
+        <div class="p-4 rounded border bg-white shadow-sm">
+          <div class="text-sm text-gray-600">Blood Group</div>
+          <div class="text-3xl font-bold text-red-700"><%= g.blood_group %></div>
+          <div class="mt-2 text-gray-700">Available Units: <span class="font-semibold"><%= g.unit_count %></span></div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div class="text-gray-600">No inventory data yet.</div>
+    <% } %>
+  </div>
+
+  <div class="mt-8 flex gap-3">
+    <a href="/donors" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Manage Donors</a>
+    <a href="/inventory" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">View Inventory</a>
+    <a href="/inventory/donate" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Record Donation</a>
+    <a href="/inventory/issue" class="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700">Issue Blood</a>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

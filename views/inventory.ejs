@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-semibold">Inventory</h1>
+    <div class="flex gap-2">
+      <a href="/inventory/donate" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Record Donation</a>
+      <a href="/inventory/issue" class="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700">Issue Blood</a>
+    </div>
+  </div>
+
+  <form method="GET" action="/inventory" class="mb-4 flex items-end gap-2">
+    <div>
+      <label class="block text-sm font-medium mb-1">Filter by Blood Group</label>
+      <select name="blood_group" class="border rounded px-3 py-2">
+        <option value="">All</option>
+        <% ['O+','O-','A+','A-','B+','B-','AB+','AB-'].forEach(g => { %>
+          <option value="<%= g %>" <%= selectedGroup===g ? 'selected' : '' %>><%= g %></option>
+        <% }) %>
+      </select>
+    </div>
+    <button class="px-4 py-2 bg-gray-800 text-white rounded">Apply</button>
+  </form>
+
+  <div class="overflow-x-auto bg-white border rounded shadow-sm">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bag ID</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Group</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation Date</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-4 py-2"></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% if (stock && stock.length) { %>
+          <% stock.forEach(b => { %>
+            <tr>
+              <td class="px-4 py-2"><%= b.bag_id %></td>
+              <td class="px-4 py-2"><%= b.donor_name || '—' %></td>
+              <td class="px-4 py-2"><%= b.blood_group %></td>
+              <td class="px-4 py-2"><%= new Date(b.donation_date).toISOString().slice(0,10) %></td>
+              <td class="px-4 py-2"><%= new Date(b.expiry_date).toISOString().slice(0,10) %></td>
+              <td class="px-4 py-2"><span class="px-2 py-1 rounded text-white <%= b.status==='Available' ? 'bg-green-600' : 'bg-gray-500' %>"><%= b.status %></span></td>
+              <td class="px-4 py-2 text-right">
+                <% if (b.status !== 'Issued') { %>
+                  <form action="/inventory/delete/<%= b.bag_id %>" method="POST" class="inline" onsubmit="return confirm('Delete this blood bag?');">
+                    <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td class="px-4 py-4 text-gray-600" colspan="7">No stock found.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
